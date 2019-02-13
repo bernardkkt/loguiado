@@ -1,23 +1,29 @@
+from .. import InterfaceResource
+
+
 class SensorBase:
-    def __init__(self):
-        pass
+    def __init__(self, name: str, comm: InterfaceResource.InterfaceSetting):
+        self.name = name
+        self.connection = comm
 
     def read(self):
-        pass
+        raise NotImplementedError()
 
     def write(self):
-        pass
+        raise NotImplementedError()
 
-
-class SensorResource(SensorBase):
-    def sensor_list(self):
-        pass
+    # def sensor_list(self):
+    #     raise NotImplementedError()
 
     def check_availability(self):
-        pass
+        raise NotImplementedError()
 
-    def get_param(self):
-        pass
+    # def get_param(self):
+    #     raise NotImplementedError()
+    #
+    # def set_param(self):
+    #     raise NotImplementedError()
 
-    def set_param(self):
-        pass
+
+if __name__ == "__main__":
+    print("Nothing to run.")

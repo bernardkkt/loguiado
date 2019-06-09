@@ -1,12 +1,15 @@
 import time
-import logging
 import multiprocessing
+
 from .InterfaceResource import InterfaceResource
+from . import logger
+
+sensor_logger = logger.EventLogger(name=__name__)
 
 
 class TaskCentre:
-    def __init__(self, log_object, sensor_dict: dict):
-        self.log = log_object
+    def __init__(self, sensor_dict: dict):
+        self.log = sensor_logger
         self.end_at = None
         sensor_list = list(sensor_dict.values())
         self.queue = []
@@ -32,16 +35,18 @@ class TaskCentre:
                 self.queue.append({sensor.name: sensor})
 
     def set_end_time(self, end_time):
-        if type(end_time) == str:  # Input is time in string
+        if isinstance(end_time, str):  # Input is time in string
             self.end_at = time.mktime(time.strptime(end_time, "%Y-%m-%d %H:%M:%S"))
-        elif type(end_time) == int or type(end_time) == float:  # Input is duration in seconds
+        elif isinstance(end_time, int) or isinstance(end_time, float):  # Input is duration
+                                                                        # in seconds
             self.end_at = time.time() + end_time
         else:
             raise TypeError("Failed to set period for logger. Please check the format again.")
 
     def start(self, csv_log_object, period: float):
         runner = MeasurementExec(self.queue)
-        runner.init_sensors()  # In case there are still some initialisation steps defined under init function
+        # In case there are still some initialisation steps defined under init function
+        runner.init_sensors()
 
         # list of sensor name with default sequence
         list_sensor = []

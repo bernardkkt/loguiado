@@ -7,7 +7,7 @@ class CPUTemperature(SensorBase.SensorBase):
     def __init__(self):
         name = "CPU Temperature"  # set a name for sensor
         comm = InterfaceSetting(InterfaceResource.EXE,
-                                 None)  # define interface
+                                None)  # define interface
         super().__init__(name, comm)
 
     def write(self):
@@ -20,10 +20,7 @@ class CPUTemperature(SensorBase.SensorBase):
             try:
                 output.wait(timeout)
                 output_list.append(output.stdout.read())
-                # self.logger.info("STDOUT: {}".format(output.stdout.read()))
-                # self.logger.info("STDERR: {}".format(output.stderr.read()))
-            except subprocess.TimeoutExpired as e:
-                # self.logger.error("{}: Unable to execute '{}' for {}.".format(e.__str__(), entry, self.name))
+            except subprocess.TimeoutExpired:
                 output.kill()
                 output_list.append(b'')
             finally:

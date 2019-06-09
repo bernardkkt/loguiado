@@ -1,10 +1,16 @@
 from .. import InterfaceResource
+from .. import logger
+
+sensor_logger = logger.EventLogger(name=__name__)
 
 
 class SensorBase:
     def __init__(self, name: str, comm: InterfaceResource.InterfaceSetting):
         self.name = name
         self.connection = comm
+        sensor_logger.write("debug", "Registered {}, using {} interface".format(
+            self.name,
+            self.connection.type))
 
     def read(self):
         raise NotImplementedError()

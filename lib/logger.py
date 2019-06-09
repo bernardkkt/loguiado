@@ -4,13 +4,16 @@ import logging
 
 
 class EventLogger:
+    """
+    Logging object customised for the usage of this application
+    """
     def __init__(self, name=__name__, log_level=logging.DEBUG, log_to_file=False):
         self.log = logging.getLogger(name)
 
         self.log.setLevel(log_level)
 
         handler = logging.StreamHandler()
-        seq = logging.Formatter('%(levelname)-9s:: %(message)s [%(name)s]')
+        seq = logging.Formatter('%(levelname)-8s::[%(name)s]:: %(message)s ')
         handler.setLevel(log_level)
         handler.setFormatter(seq)
         self.log.addHandler(handler)
@@ -32,6 +35,9 @@ class EventLogger:
 
 
 class WriterCSV:
+    """
+    A CSV writer object using logging module
+    """
     def __init__(self, path=None):
         # Too lazy to write new CSV wrapper, hence dump it to logging
         self.writer = logging.getLogger("READING")
@@ -51,7 +57,7 @@ class WriterCSV:
         logging.shutdown()
 
     def register(self, entry: list):
-        if not len(entry):
+        if not entry:
             raise ValueError("The list contains no measurement.")
         self.csvheader = entry
         self.writer.log(100, ",".join(entry))
@@ -67,7 +73,7 @@ class WriterCSV:
 
     def _create_file(self, path):
         filename = path if path else time.strftime("%Y%m%d-%H%M%S")  # Define file name
-        filename = filename if filename.endswith(".csv") else filename + ".csv"  # Add file extension
+        filename = filename if filename.endswith(".csv") else filename + ".csv"
         full_path = os.path.abspath(filename)
         if not os.access(os.path.dirname(full_path), os.W_OK):
             raise PermissionError("Unable to save log file to destination")
@@ -76,4 +82,3 @@ class WriterCSV:
 
 if __name__ == '__main__':
     pass
-

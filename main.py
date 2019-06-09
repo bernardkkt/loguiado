@@ -1,20 +1,20 @@
+import inspect
+
 from lib import logger
 from lib import sensor
 from lib.sensor import *
 from lib import dispatcher
-import logging
-import inspect
 
 
 def main():
-    # TODO Add support for arguments with argsparse.
+    # TODO: Add support for arguments with argsparse.
     # Initialise logging module
     main_logger = logger.EventLogger(name=__name__)
     main_logger.write("debug", "Program starts.")
 
-    # Add available sensors to a dictionary
+    # Add available sensors to a dictionary: dict_key is str, dict_value is sensor object
     sensors = {}
-    if len(sensor.__all__):
+    if sensor.__all__:  # if sensor module file exists under lib/sensor folder
         for module in sensor.__all__:
             for obs, y in inspect.getmembers(eval(module)):
                 if inspect.isclass(y) and inspect.getmodule(y) == eval(module):
@@ -26,11 +26,21 @@ def main():
     else:
         main_logger.write("error", "No module found.")
 
-    csv = logger.WriterCSV()  # Initialise CSV writer
+    # Exit the application if no usable sensor
+    if not sensors:
+        main_logger.write("error", "Sensor list is zero. No usable sensor is available.")
+        raise Exception("Sensor list is zero. No usable sensor is available.")
+
+    # Initialise CSV writer
+    csv = logger.WriterCSV()
 
     # Send sensors to execution engine
-    engine = dispatcher.TaskCentre(main_logger, sensors)
-    main_logger.write("info", "Loaded modules: {}".format(engine.queue))
+    engine = dispatcher.TaskCentre(sensors)
+    sensor_queue_list = []
+    for sens in engine.queue:
+        for sen in sens:
+            sensor_queue_list.append(sen)
+    main_logger.write("debug", "Loaded modules: {}".format(";".join(z for z in sensor_queue_list)))
     main_logger.write("info", "First level elements in the list will be executed concurrently.")
     engine.set_end_time(60)
     try:
@@ -38,7 +48,6 @@ def main():
     finally:
         csv.shutdown()
     main_logger.write("info", "Ended.")
-    return
 
 
 if __name__ == '__main__':

@@ -4,11 +4,15 @@ from ..InterfaceResource import InterfaceResource, InterfaceSetting
 
 
 class Timestamp(SensorBase.SensorBase):
+    """
+    This sensor module generates timestamps
+    """
     def __init__(self):
         name = "Time"  # set a name for sensor
-        comm = InterfaceSetting(InterfaceResource.EXE,
-                                 None)  # define interface
-        self.parameters = {"unit": "%Y-%m-%d %H:%M:%S",  # Available options: "sec", ".2f", "%Y-%m-%d %H:%M:%S"
+        comm = InterfaceSetting(InterfaceResource.EXE, None)  # define interface
+        self.parameters = {"unit": "%Y-%m-%d %H:%M:%S",  # Available options: "sec",
+                                                         #                    ".2f",
+                                                         #                    "%Y-%m-%d %H:%M:%S"
                            "type": "datetime"}  # Available options: "relative", "datetime"
         self.START_EPOCH = None
         super().__init__(name, comm)
@@ -24,8 +28,7 @@ class Timestamp(SensorBase.SensorBase):
             self._get_time()
             return True
         except:
-            pass
-        return False
+            return False
 
     def read(self):
         val = self._get_time()  # Get time
@@ -36,7 +39,8 @@ class Timestamp(SensorBase.SensorBase):
             if self.parameters["unit"] == "sec":
                 return int(val - self.START_EPOCH)
             else:
-                return format((val - self.START_EPOCH), self.parameters["unit"])  # Return time in defined decimal place
+                return format((val - self.START_EPOCH),
+                              self.parameters["unit"])  # Return time in defined decimal place
         elif self.parameters["type"] == "datetime":
             if self.parameters["unit"] == "sec":  # Return epoch time
                 return val

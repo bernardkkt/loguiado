@@ -28,7 +28,7 @@ def main():
 
     # Exit the application if no usable sensor
     if not sensors:
-        main_logger.write("error", "Sensor list is zero. No usable sensor is available.")
+        main_logger.write("error", "Sensor list is empty. No usable sensor is available.")
         raise Exception("Sensor list is zero. No usable sensor is available.")
 
     # Initialise CSV writer
